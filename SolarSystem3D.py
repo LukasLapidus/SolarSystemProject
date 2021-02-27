@@ -20,16 +20,16 @@ L = 2*UA                # Longueur des axes fixes de l'esapce
 ###############################################################################
 
 
-# Choix de la fraction de journée : le pas sera de 1/n jours
+# Choix de la fraction de journée : le pas d'intégration sera de 1/n jours
 #n = 50 ou n = 30 pour les planetes proches
-#n = 1/2 ou 1/10 pour les planetes distantes)
+#n = 1 pour les planetes distantes mais l'erreur commence à apparaître
 
 n = 30
 dt = J/n    # (NE PAS CHANGER) dt est en seconde, il vaut l'équivalent d'une journée divisée par n
 
 
-nb_boucles = 10000      # Nombre d'itérations par seconde
-
+nb_boucles = 600        # Nombre d'itérations par seconde (ne pas trop toucher, permet un affichage qui ne dépend pas du temps de calcul et donc plus régulier)
+                        # PS : Le nombre de boucles par seconde est limité à autour de 800 sur mon ordinateur
 
 t0 = 500                 # Date de début des secondes mesures (en jours)
 
@@ -37,9 +37,9 @@ t0 = 500                 # Date de début des secondes mesures (en jours)
 
 # Paramètres de la fenetre d'affichage :
 
-scene.width = 1600
-scene.height = 800
-
+scene.width = 1000
+scene.height = 500
+scene.align = 'right'
 
 
 
@@ -306,14 +306,16 @@ def mesures(Planetes,t,t0,n):              # Calcul des mesures sur les planète
                 planete.ecart_t0 = mag(planete.pos - planete.pos_t0)
     
     
-    Legende_scene = "\nTemps en années : " + str(t/365.26)  + "\nTemps en jours : " + str(t) + "\n"   # Affichage du temps (années et jours)
-    Legende_scene += "\nDate t0 (en jours) : " + str(t0) +"\nPas pour chaque itération (en jours) : " + str(1/n) + "\n"
+    scene.title = "<title>Solar System</title>"
+    Legende_scene = "<h1>Solar System</h1>\n<i>N'hésitez pas à zoomer sur l'écran, ainsi que de faire tourner \nla caméra à l'aide du clique droit</i>\n\n"
+    Legende_scene += "\nTemps en années : " + str("%.6f" % (t/365.26))  + "\nTemps en jours : " + str("%.2f" % t) + "\n"   # Affichage du temps (années et jours)
+    Legende_scene += "\nDate t0 (en jours) : " + str(t0) +"\nPas pour chaque itération (en jours) : " + str("%.4f" % (1/n)) + "\nn = " + str(n) + "\n\n"
     
-    for planete in Planetes:
-        Legende_scene += "\nDistance périhélie de " + planete.name + " : " + str("%.2e" % mag(planete.perihelie))
-        Legende_scene += "\nDistance aphélie de " + planete.name + " : " + str("%.2e" % mag(planete.aphelie))
-        Legende_scene += "\nPériode de " + planete.name + " : " + str(planete.periode)
-        Legende_scene += "\nPériode de " + planete.name + " (calculée à partie de t0) : " + str(planete.periode_t0)
+    for planete in Planetes:            # Affichage des mesures en description
+        Legende_scene += "\nDistance périhélie de " + planete.name + " : " + str("%.2e" % mag2(planete.perihelie))
+        Legende_scene += "\nDistance aphélie de " + planete.name + " : " + str("%.2e" % mag2(planete.aphelie))
+        Legende_scene += "\nPériode de " + planete.name + " : " + str("%.2f" % planete.periode)
+        Legende_scene += "\nPériode de " + planete.name + " (calculée à partie de t0) : " + str("%.2f" % planete.periode_t0)
         Legende_scene += "\nEcart de distance sur la première période de " + planete.name + " : " + str("%.2e" % planete.ecart)
 
         Legende_scene += "\n"
@@ -322,7 +324,7 @@ def mesures(Planetes,t,t0,n):              # Calcul des mesures sur les planète
 
     i_planete=0                 # Affichage des periodes dans l'espace en 3D
     for legende in Legendes:
-        legende.text = str(Planetes[i_planete].periode)
+        legende.text = str("%.2f" % Planetes[i_planete].periode)
         i_planete += 1
 
 
